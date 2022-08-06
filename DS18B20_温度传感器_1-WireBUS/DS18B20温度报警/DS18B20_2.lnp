@@ -1,0 +1,11 @@
+"AT24C02.obj",
+"I2C.obj",
+"Delay.obj",
+"DS18B20.obj",
+"LCD1602.obj",
+"main.obj",
+"OneWire.obj",
+"Timer0.obj",
+"key_TIMER.obj" 
+TO "DS18B20_2" 
+RAMSIZE(256) 

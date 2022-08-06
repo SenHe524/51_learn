@@ -1,0 +1,24 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\AUTO_1\Desktop\keil5_project\Greedy snake\新建文件夹\Greedy snake.uvproj
+Project File Date:  01/28/2022
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+MAIN.C(258): warning C206: 'rand': missing function-prototype
+MAIN.C(200): warning C280: 'key': unreferenced local variable
+linking...
+Program Size: data=33.0 xdata=0 code=1073
+creating hex file from "Greedy snake"...
+"Greedy snake" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+MAIN.C(200): warning C280: 'key': unreferenced local variable
+linking...
+Program Size: data=33.0 xdata=0 code=1073
+creating hex file from "Greedy snake"...
+"Greedy snake" - 0 Error(s), 1 Warning(s).

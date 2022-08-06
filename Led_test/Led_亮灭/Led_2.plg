@@ -1,0 +1,60 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\AUTO_1\Desktop\keil5_project\Led_test\Led_2\Led_2.uvproj
+Project File Date:  01/07/2022
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+Program Size: data=9.0 xdata=0 code=23
+"Led_2" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=9.0 xdata=0 code=23
+creating hex file from "Led_2"...
+"Led_2" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling Led_2.c...
+LED_2.C(7): warning C206: '_nop_': missing function-prototype
+LED_2.C(7): error C264: intrinsic '_nop_': declaration/activation error
+Target not created
+Build target 'Target 1'
+compiling Led_2.c...
+linking...
+Program Size: data=9.0 xdata=0 code=35
+creating hex file from "Led_2"...
+"Led_2" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=9.0 xdata=0 code=35
+creating hex file from "Led_2"...
+"Led_2" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling Led_2.c...
+LED_2.C(24): warning C206: 'Delay500us': missing function-prototype
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?DELAY500MS?LED_2
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  DELAY500US
+    MODULE:  Led_2.obj (LED_2)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DELAY500US
+    MODULE:  Led_2.obj (LED_2)
+    ADDRESS: 0812H
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  DELAY500US
+    MODULE:  Led_2.obj (LED_2)
+    ADDRESS: 0818H
+Program Size: data=9.0 xdata=0 code=43
+creating hex file from "Led_2"...
+"Led_2" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+compiling Led_2.c...
+linking...
+Program Size: data=9.0 xdata=0 code=43
+creating hex file from "Led_2"...
+"Led_2" - 0 Error(s), 0 Warning(s).

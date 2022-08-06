@@ -1,0 +1,7 @@
+"Matrix_Timer.obj",
+"Nixie_Timer.obj",
+"Timer0.obj",
+"UART.obj",
+"main2.obj" 
+TO "Clock" 
+RAMSIZE(256) 

@@ -1,0 +1,7 @@
+"buzzer_1.obj",
+"Buzzer.obj",
+"key.obj",
+"Nixie.obj",
+"Delay.obj" 
+TO "buzzer_1" 
+RAMSIZE(256) 

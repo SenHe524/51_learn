@@ -1,0 +1,66 @@
+C51 COMPILER V9.01   SCOM_2                                                                01/27/2022 09:18:34 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE SCOM_2
+OBJECT MODULE PLACED IN Scom_2.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE Scom_2.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "DELAY.H"
+   3          #include "UART.H"
+   4          unsigned char code Table[] = {'1','2','3'};
+   5          unsigned char ReceiveData;
+   6          
+   7          void UART_Routine() interrupt 4
+   8          {
+   9   1              ReceiveData = UART_ReceiveByte();
+  10   1      //      if(RI){
+  11   1      //              ReceiveData = SBUF;
+  12   1      //              RI = 0;
+  13   1      //      }       
+  14   1      }
+  15          void main()
+  16          {
+  17   1              UART_Init();
+  18   1              while(1)
+  19   1              {
+  20   2                      if(ReceiveData == Table[0])
+  21   2                      {
+  22   3                              P2 = 0xFE;
+  23   3                      }
+  24   2                      else if(ReceiveData == Table[1])
+  25   2                      {
+  26   3                              P2 = 0xFD;
+  27   3                      }
+  28   2                      else if(ReceiveData == Table[2])
+  29   2                      {
+  30   3                              P2 = 0xFC;
+  31   3                      }
+  32   2                      else if(ReceiveData == '0')
+  33   2                      {
+  34   3                              P2 = 0xFB;
+  35   3                      }
+  36   2                      else
+  37   2                      {
+  38   3                              P2 = 0x00;
+  39   3                              UART_SendByte(5+'0');
+  40   3                              Delayms(80);
+  41   3                      }
+  42   2              }
+  43   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    130    ----
+   CONSTANT SIZE    =      3    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

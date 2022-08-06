@@ -1,0 +1,80 @@
+C51 COMPILER V9.01   KEY_TIMER                                                             01/18/2022 11:25:56 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE KEY_TIMER
+OBJECT MODULE PLACED IN key_TIMER.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE key_TIMER.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "DELAY.H"
+   3          
+   4          unsigned char K_KeyNumber;
+   5          
+   6          
+   7          /**
+   8             *    @brief  获取按键键码
+   9             *    @param  无
+  10             *    @retval 按下的按键键码，范围;0-4,0表示无按键按下
+  11             */
+  12          unsigned char Key()
+  13          {
+  14   1              unsigned char Temp = 0;
+  15   1              Temp = K_KeyNumber;
+  16   1              K_KeyNumber = 0;
+  17   1              return Temp;
+  18   1      }
+  19          
+  20          /**
+  21             *    @brief  获取当前按键的状态，无消抖及松手检测
+  22             *    @param  无
+  23             *    @retval 按下的按键的键码，范围;0-4,0表示无按键按下
+  24             */
+  25          unsigned char Key_GetState()
+  26          {
+  27   1              unsigned char KeyNumber = 0;
+  28   1              if(P3_1==0){KeyNumber=1;}
+  29   1              if(P3_0==0){KeyNumber=2;}
+  30   1              if(P3_2==0){KeyNumber=3;}
+  31   1              if(P3_3==0){KeyNumber=4;}
+  32   1              return KeyNumber;
+  33   1      }
+  34          
+  35          /**
+  36             *    @brief  按键驱动函数，在中断中调用
+  37             *    @param  无
+  38             *    @retval 无
+  39             */
+  40          void Key_Loop()
+  41          {
+  42   1              static unsigned char N_State,L_State;
+  43   1              unsigned int i;
+  44   1              L_State = N_State;        //按键状态更新
+  45   1              N_State = Key_GetState();                 //获取当前按键状态
+  46   1              //若上一个中断按键按下，现在这个中断未按下，则判断为刚松手以此作为松手检测
+  47   1              for(i=0;i<4;i++)
+  48   1              {
+  49   2                      if(L_State==(i+1) && N_State==0)
+  50   2                      {
+  51   3                              K_KeyNumber = i+1;
+  52   3                              break;
+  53   3                      }       
+  54   2              }
+  55   1      }
+C51 COMPILER V9.01   KEY_TIMER                                                             01/18/2022 11:25:56 PAGE 2   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     77    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

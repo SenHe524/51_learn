@@ -1,0 +1,71 @@
+C51 COMPILER V9.01   SHOW_74HC595                                                          01/11/2022 18:15:39 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE SHOW_74HC595
+OBJECT MODULE PLACED IN Show_74HC595.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE Show_74HC595.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "DELAY.H"
+   3          
+   4          sbit SER = P3^4;  //SER
+   5          sbit SCK = P3^6;  //SRCLK
+   6          sbit RCK = P3^5;  //RCLK
+   7          
+   8          #define D_Scr_Port P0           //将P0口重命名位D_Scr_Port
+   9          
+  10          
+  11          /**
+  12             *    @brief  74HC595写入一个字节
+  13             *    @param  Byte:要写入的字节
+  14             *    @retval 无
+  15             */   
+  16          void WriteByte_74595(unsigned char Byte)
+  17          {
+  18   1              unsigned int i;
+  19   1              SCK = 0;
+  20   1          RCK = 0;
+  21   1              //16进制Byte赋值给位SER，Byte非0，SER即1
+  22   1              //Byte&1000 0000,Byte最高位为1,SER为1(1000 0000为非零)
+  23   1              //Byte最高位为0,SER为0(0000 0000为0)
+  24   1              for(i=0;i<8;i++)
+  25   1              {
+  26   2                      SER = Byte&(0x80>>i);//0x80>>i   0x80位右移i位  
+  27   2                  SCK = 1;//高电平移位
+  28   2                  SCK = 0;//低电平,为下一次高电平做准备
+  29   2              }
+  30   1              RCK = 1;
+  31   1              RCK = 0;                                 
+  32   1      }
+  33          
+  34          /**
+  35             *    @brief   LED点阵屏显示一列数据
+  36             *    @param   line:显示数据的列，范围：0~7，0为点阵屏最左列，7为最右列
+  37             *    @param   Data:需要显示的数据，高位在上，1亮，0灭
+  38             *    @retval  无
+  39             */   
+  40          void D_Scr_Show(unsigned char line,unsigned char Data)
+  41          {
+  42   1              WriteByte_74595(Data);
+  43   1              D_Scr_Port = ~(0x80>>line); //将第line列的P0口为低电平，使其导通，即使LED能点亮
+  44   1              Delayms(1);     //延时
+  45   1              D_Scr_Port = 0xFF;      //位清零
+  46   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     93    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.01   SHOW_74HC595                                                          01/11/2022 18:15:39 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

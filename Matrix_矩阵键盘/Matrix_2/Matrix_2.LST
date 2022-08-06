@@ -1,0 +1,80 @@
+C51 COMPILER V9.01   MATRIX_2                                                              01/17/2022 10:32:34 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MATRIX_2
+OBJECT MODULE PLACED IN Matrix_2.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE Matrix_2.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "DELAY.H"
+   3          #include "LCD1602.H"
+   4          #include "NIXIE.H"
+   5          #include "MATRIX_NUM.H"
+   6          
+   7          unsigned char K_Num;
+   8          unsigned int PassWord = 1568;
+   9          unsigned int PassWord_Temp = 0;
+  10          unsigned int Count = 0;
+  11          
+  12          void main()
+  13          {
+  14   1              LCD_Init();
+  15   1              LCD_ShowString(1,1,"Password:");
+  16   1              LCD_ShowNum(2,1,PassWord_Temp,4);        //更新显示
+  17   1              while(1)
+  18   1              {
+  19   2                      K_Num = Matrix_Num();
+  20   2                      if(K_Num)
+  21   2                      {
+  22   3                              if(K_Num<=10) //输入密码：只有按下1—10才有用：1-9对应1-9，10对应0；
+  23   3                              {
+  24   4                                      if(Count<4)              //输入四位密码
+  25   4                                      {
+  26   5                                              PassWord_Temp *= 10;
+  27   5                                              PassWord_Temp += K_Num%10;
+  28   5                                              Count++;
+  29   5                                      }
+  30   4                                      LCD_ShowNum(2,1,PassWord_Temp,4);        //更新显示
+  31   4                              }
+  32   3                              if(K_Num==11)
+  33   3                              {
+  34   4                                      if(PassWord_Temp==PassWord)
+  35   4                                      {
+  36   5                                              LCD_ShowString(1,14,"OK!");
+  37   5                                      }
+  38   4                                      else
+  39   4                                      {
+  40   5                                              LCD_ShowString(1,14,"ERR");                     
+  41   5                                      }
+  42   4                                      PassWord_Temp = 0;
+  43   4                                      Count = 0;
+  44   4                                      LCD_ShowNum(2,1,PassWord_Temp,4);        //更新显示
+  45   4                              }
+  46   3                              if(K_Num==12)
+  47   3                              {
+  48   4                                      PassWord_Temp = 0;
+  49   4                                      Count = 0;
+  50   4                                      LCD_ShowNum(2,1,PassWord_Temp,4);        //更新显示
+  51   4                              }                       
+  52   3                      }
+  53   2      
+  54   2              }
+  55   1      }
+C51 COMPILER V9.01   MATRIX_2                                                              01/17/2022 10:32:34 PAGE 2   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    203    ----
+   CONSTANT SIZE    =     18    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

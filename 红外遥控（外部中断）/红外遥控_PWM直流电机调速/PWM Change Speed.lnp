@@ -1,0 +1,10 @@
+"main.obj",
+"Delay.obj",
+"Nixie.obj",
+"Timer1.obj",
+"Int0.obj",
+"IR.obj",
+"Timer0.obj",
+"Motor.obj" 
+TO "PWM Change Speed" 
+RAMSIZE(256) 

@@ -1,0 +1,7 @@
+"Timer0.obj",
+"main.obj",
+"Show_74HC595.obj",
+"Matrix_Num.obj",
+"Delay.obj" 
+TO "Greedy snake" 
+RAMSIZE(256) 

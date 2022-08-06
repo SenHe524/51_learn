@@ -1,0 +1,60 @@
+C51 COMPILER V9.01   I2C_1                                                                 01/17/2022 11:09:23 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE I2C_1
+OBJECT MODULE PLACED IN I2C_1.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE I2C_1.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <string.h>
+   3          #include "LCD1602.H"
+   4          #include "KEY.H"
+   5          #include "AT24C02.H"
+   6          #include "I2C.H"
+   7          #include "DELAY.H"
+   8          #include "D_Scr.H"
+   9          
+  10          void main()
+  11          {
+  12   1              unsigned int Data = 0;
+  13   1      
+  14   1              LCD_Init();
+  15   1      //      LCD_ShowString(1,1,"Password:");
+  16   1      //    AT24C02_WriteByte(0,4);//经试验发现，两次写入之间必须延时，否则会写入错误
+  17   1      //      Delayms(5);
+  18   1      //      AT24C02_WriteByte(1,5);
+  19   1      //      Delayms(5);
+  20   1      //      AT24C02_WriteByte(55,8);//在写入之后，跟一个延时，再读取
+  21   1      //      Delayms(5);
+  22   1      //    Data = AT24C02_ReadByte(55);
+  23   1      //      if(Data==8)
+  24   1      //      {
+  25   1      //              D_Scr_Byte(1);  
+  26   1      //      }
+  27   1      //      else
+  28   1      //      {
+  29   1      //              D_Scr_Byte(2);  
+  30   1      //      }
+  31   1              LCD_ShowNum(2,1,166,4);
+  32   1      
+  33   1      //      while(1)
+  34   1      //      {
+  35   1              
+  36   1      //      }
+  37   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     22    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

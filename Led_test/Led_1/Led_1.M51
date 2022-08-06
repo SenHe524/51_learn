@@ -1,0 +1,99 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        01/07/2022  14:24:06  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+E:\KEIL5\C51\BIN\BL51.EXE Led_1.obj, Led_2.obj TO Led_1 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  Led_1.obj (LED_1)
+  Led_2.obj (LED_2)
+  E:\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  Led_1 (LED_1)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     000CH     UNIT         ?C_C51STARTUP
+            CODE    080CH     0008H     UNIT         ?PR?MAIN?LED_2
+            CODE    0814H     0004H     UNIT         ?PR?MAIN?LED_1
+
+
+
+OVERLAY MAP OF MODULE:   Led_1 (LED_1)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?LED_1
+
+
+
+IGNORED SYMBOLS:
+   MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  Led_1 (LED_1)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LED_1
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  C:0814H         PUBLIC        main
+  -------         PROC          MAIN
+BL51 BANKED LINKER/LOCATER V6.22                                                      01/07/2022  14:24:06  PAGE 2
+
+
+  C:0814H         LINE#         2
+  C:0814H         LINE#         3
+  C:0814H         LINE#         4
+  C:0817H         LINE#         5
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        LED_1
+
+  -------         MODULE        LED_2
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  C:080CH         PUBLIC        main
+  -------         PROC          MAIN
+  C:080CH         LINE#         2
+  C:080CH         LINE#         3
+  C:080CH         LINE#         4
+  C:080CH         LINE#         5
+  C:080CH         LINE#         6
+  C:080FH         LINE#         7
+  C:0812H         LINE#         8
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        LED_2
+
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  MAIN
+    MODULE:  Led_2.obj (LED_2)
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?MAIN?LED_2
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 000CH BYTE ( 0%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=27
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  1 ERROR(S)

@@ -1,0 +1,73 @@
+C51 COMPILER V9.01   AT24C02                                                               01/18/2022 11:25:55 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE AT24C02
+OBJECT MODULE PLACED IN AT24C02.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE AT24C02.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "I2C.H"
+   3          
+   4          #define AT24C02_Address_W 0xA0
+   5          #define AT24C02_Address_R 0xA1
+   6          
+   7          
+   8          /**
+   9             *    @brief  AT24C02写入字节
+  10             *    @param  WordAddress：写入地址  Data：写入的数据
+  11             *    @retval 无
+  12             */
+  13          void AT24C02_WriteByte(unsigned char WordAddress,Data)
+  14          {
+  15   1              I2C_Start();
+  16   1              I2C_SendByte(AT24C02_Address_W);
+  17   1              I2C_ReceiveAck();
+  18   1              I2C_SendByte(WordAddress);
+  19   1              I2C_ReceiveAck();
+  20   1              I2C_SendByte(Data);
+  21   1              I2C_ReceiveAck();
+  22   1              I2C_Stop();
+  23   1      
+  24   1      }
+  25          
+  26          
+  27          /**
+  28             *    @brief  AT24C02读取一个字节
+  29             *    @param  WordAddress：读取数据的地址
+  30             *    @retval Data：读取到的数据
+  31             */
+  32          unsigned char AT24C02_ReadByte(unsigned char WordAddress)
+  33          {
+  34   1              unsigned char Data;
+  35   1              I2C_Start();
+  36   1              I2C_SendByte(AT24C02_Address_W);
+  37   1              I2C_ReceiveAck();
+  38   1              I2C_SendByte(WordAddress);
+  39   1              I2C_ReceiveAck();
+  40   1              I2C_Start();
+  41   1              I2C_SendByte(AT24C02_Address_R);
+  42   1              I2C_ReceiveAck();
+  43   1          Data = I2C_ReceiveByte();
+  44   1              I2C_SendAck(1);
+  45   1              I2C_Stop();
+  46   1      
+  47   1              return Data;
+  48   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     84    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.01   AT24C02                                                               01/18/2022 11:25:55 PAGE 2   
+
+   DATA SIZE        =   ----       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

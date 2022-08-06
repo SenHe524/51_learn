@@ -1,0 +1,218 @@
+C51 COMPILER V9.01   MAIN2                                                                 02/10/2022 09:25:09 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN2
+OBJECT MODULE PLACED IN main2.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE main2.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "UART.H"
+   3          #include "TIMER0.H"
+   4          #include "NIXIE_TIMER.H"
+   5          #include "MATRIX_TIMER.H"
+   6          //#include "KEY_TIMER.H"
+   7          
+   8          unsigned char Con_Clock;        //时钟自走标志位
+   9          unsigned char ReceiveData;      //串口接收数据变量
+  10          unsigned char Hour=12,Min=35,Sec=10,Tim;         //时间参数
+  11          unsigned char KeyNum,Flag;               //接收键码
+  12          
+  13          void Clock_Show();               //时钟数码管显示函数
+  14          void Clock_Loop();               //定时器调用时钟自走函数
+  15          void Clock_SetTime();    //时钟设置函数
+  16          
+  17          void main()
+  18          {
+  19   1              UART_Init();
+  20   1              Timer0_Init();
+  21   1      
+  22   1              UART_SendByte(0x35);
+  23   1      
+  24   1              while(1)
+  25   1              {
+  26   2                      Clock_Show();            //数码管显示时间
+  27   2                      if(ReceiveData == 'R')     //判断串口接收数据是否为“R”  启动
+  28   2                      {
+  29   3                              Con_Clock = 1;            //时间自走标志位置1，开启时钟
+  30   3                              Flag = 0;
+  31   3                      }
+  32   2                      else if(ReceiveData == 'P')      //判断串口接收数据是否为“P”    暂停
+  33   2                      {
+  34   3                              Con_Clock = 0;                    //时间自走标志位置0，暂停时钟
+  35   3                      }
+  36   2                      else if(ReceiveData == 'C')       //判断串口接收数据是否为“C”    更改
+  37   2                      {
+  38   3                              Con_Clock = 0;                   //时间自走标志位置0，暂停时钟
+  39   3                              Clock_SetTime();                 //调用时间设置函数
+  40   3                      }
+  41   2                      
+  42   2              }
+  43   1      }
+  44          void UART_Routine() interrupt 4          //串口中断
+  45          {
+  46   1              if(RI)           //若有数据 则进入
+  47   1              {
+  48   2                      if((SBUF == 'R') || (SBUF == 'P') || (SBUF == 'C'))        //过滤其他数据
+  49   2                      {
+  50   3                              ReceiveData = SBUF;
+  51   3                              RI = 0;
+  52   3                      }
+  53   2                      RI = 0;
+  54   2              }
+  55   1      }
+C51 COMPILER V9.01   MAIN2                                                                 02/10/2022 09:25:09 PAGE 2   
+
+  56          
+  57          void Timer0_Routine() interrupt 1         //定时器中断
+  58          {
+  59   1              static unsigned int T0count1,T0count2,T0count3;//
+  60   1              TL0 = 0x18;             //设置定时初始值
+  61   1              TH0 = 0xFC;             //设置定时初始值
+  62   1              if(T0count1>=1000)         //每1s调用一次Clock_Loop
+  63   1              {
+  64   2                      T0count1 = 0;
+  65   2                      Clock_Loop();
+  66   2                      Tim++;
+  67   2              }
+  68   1              T0count1++;
+  69   1              if((T0count2 >= 10) && (ReceiveData == 'C'))      //每10ms调用一次Matrix_Loop
+  70   1              {
+  71   2                      T0count2 = 0;
+  72   2                      Matrix_Loop();
+  73   2              }
+  74   1              T0count2++;
+  75   1              if(T0count3 >= 2)                //每2ms调用一次Nixie_Loop
+  76   1              {
+  77   2                      T0count3 = 0;
+  78   2                      Nixie_Loop();
+  79   2              }
+  80   1              T0count3++;
+  81   1      }
+  82          void Clock_Loop()          //时钟更新函数
+  83          {
+  84   1              if(Con_Clock)
+  85   1              {
+  86   2                      Sec++;
+  87   2                      if(Sec>=60)
+  88   2                      {
+  89   3                              Sec = 0;
+  90   3                              Min++;
+  91   3                              if(Min>=60)
+  92   3                              {
+  93   4                                      Min = 0;
+  94   4                                      Hour++;
+  95   4                                      if(Hour>=24)
+  96   4                                      {
+  97   5                                              Hour = 0;
+  98   5                                      }
+  99   4                              }
+ 100   3                      }
+ 101   2              }       
+ 102   1      }
+ 103          void Clock_Show()                 //时间显示函数
+ 104          {
+ 105   1              Nixie_Scan(3,17);        //显示横杠
+ 106   1              Nixie_Scan(6,17);       
+ 107   1              if((Flag == 0) && (ReceiveData == 'C') && (Tim%2 == 0))
+ 108   1              {
+ 109   2                      Nixie_Scan(7,16);
+ 110   2                      Nixie_Scan(8,16);
+ 111   2              }
+ 112   1              else
+ 113   1              {
+ 114   2                      Nixie_Scan(7,Sec/10);
+ 115   2                      Nixie_Scan(8,Sec%10);
+ 116   2              }       
+ 117   1              if((Flag == 1) && (ReceiveData == 'C') && (Tim%2 == 0))
+C51 COMPILER V9.01   MAIN2                                                                 02/10/2022 09:25:09 PAGE 3   
+
+ 118   1              {
+ 119   2                      Nixie_Scan(4,16);
+ 120   2                      Nixie_Scan(5,16);
+ 121   2              }
+ 122   1              else
+ 123   1              {
+ 124   2                      Nixie_Scan(4,Min/10);
+ 125   2                      Nixie_Scan(5,Min%10);
+ 126   2              }
+ 127   1              if((Flag == 2) && (ReceiveData == 'C') && (Tim%2 == 0))
+ 128   1              {
+ 129   2                      Nixie_Scan(1,16);
+ 130   2                      Nixie_Scan(2,16);
+ 131   2              }
+ 132   1              else
+ 133   1              {
+ 134   2                      Nixie_Scan(1,Hour/10);
+ 135   2                      Nixie_Scan(2,Hour%10);
+ 136   2              }
+ 137   1              if(ReceiveData != 'C')
+ 138   1              {
+ 139   2                      Nixie_Scan(1,Hour/10);
+ 140   2                      Nixie_Scan(2,Hour%10);
+ 141   2                      Nixie_Scan(4,Min/10);
+ 142   2                      Nixie_Scan(5,Min%10);
+ 143   2                      Nixie_Scan(7,Sec/10);
+ 144   2                      Nixie_Scan(8,Sec%10);   
+ 145   2              }
+ 146   1              Tim %=10 ;
+ 147   1      }
+ 148          void Clock_SetTime()              //时钟设置函数
+ 149          {
+ 150   1              KeyNum = Matrix_Num();
+ 151   1              if(KeyNum)
+ 152   1              {
+ 153   2      //              UART_SendByte(0x35);
+ 154   2                      if(KeyNum == 1)
+ 155   2                      {
+ 156   3                              Flag += 1;Flag %= 3;//Flag越界判断，若大于等于3，则赋值0；
+ 157   3                      }
+ 158   2                      else if((KeyNum == 2) && (Flag == 0))     //按下键2，则进行  +
+ 159   2                      {
+ 160   3                              Sec++;
+ 161   3                              Sec %= 60;
+ 162   3                      }
+ 163   2                      else if((KeyNum == 2) && (Flag == 1))
+ 164   2                      {
+ 165   3                              Min++;
+ 166   3                              Min %= 60;
+ 167   3                      }
+ 168   2                      else if((KeyNum == 2) && (Flag == 2))
+ 169   2                      {
+ 170   3                              Hour++;
+ 171   3                              Hour %= 24;
+ 172   3                      }
+ 173   2                      else if((KeyNum == 3) && (Flag == 0))     //按下键3，则进行  -
+ 174   2                      {
+ 175   3                              if(Sec == 0){Sec = 60;}
+ 176   3                              Sec--;  
+ 177   3                      }
+ 178   2                      else if((KeyNum == 3) && (Flag == 1))
+ 179   2                      {
+C51 COMPILER V9.01   MAIN2                                                                 02/10/2022 09:25:09 PAGE 4   
+
+ 180   3                              if(Min == 0){Min = 60;}
+ 181   3                              Min--;
+ 182   3                      }
+ 183   2                      else if((KeyNum == 3) && (Flag == 2))
+ 184   2                      {
+ 185   3                              if(Hour == 0){Hour = 24;}
+ 186   3                              Hour--;
+ 187   3                      }
+ 188   2              }       
+ 189   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    726    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     14    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

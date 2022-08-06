@@ -1,0 +1,4 @@
+"Nixie_1.obj",
+"Delay.obj" 
+TO "Nixie_test" 
+RAMSIZE(256) 

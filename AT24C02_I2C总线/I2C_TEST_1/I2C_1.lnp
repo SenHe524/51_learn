@@ -1,0 +1,10 @@
+"I2C_1.obj",
+"AT24C02.obj",
+"Delay.obj",
+"I2C.obj",
+"LCD1602.obj",
+"Show_74HC595.obj",
+"D_Scr.obj" 
+TO "I2C_1" 
+RAMSIZE(256) 
+DISABLEWARNING (16) 

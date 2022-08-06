@@ -1,0 +1,138 @@
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:21:41 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "LCD1602.H"
+   3          #include "MATRIX_NUM.H"
+   4          
+   5          
+   6          unsigned char K_Num,Sym[4];//K_Num 矩阵按键键码，Sym “+ - * /”
+   7          unsigned long Data_1,Data_2,Data_3;//Data_1:第一个数据  Data_2:第二个数据  Data_3：结果
+   8          
+   9          unsigned char CFlag_1,CFlag_2;  //CFlag_1：是否按下加减乘除的标志位  CFlag_2：是否按下等号的标志位
+  10          unsigned int i,Num[8];
+  11          unsigned long Pow(int X,int Y);
+  12          
+  13          void main()
+  14          {
+  15   1              
+  16   1              LCD_Init();
+  17   1              LCD_ShowString(1,1,"OK!");
+  18   1              while(1)
+  19   1              {
+  20   2                      K_Num = Matrix_Num();//获取键码
+  21   2                      if(K_Num != 99)//如果按键按下
+  22   2                      {                       
+  23   3                              if((K_Num != '+') && (K_Num != '-') && (K_Num != '*')
+  24   3                                      && (K_Num != 'C') && (K_Num != '=') && (K_Num != '/')
+  25   3                                      && (CFlag_1 == 0) && (CFlag_2 == 0))//第一个数据的输入判断
+  26   3                              {                                       
+  27   4                                      if(Data_1 < 1000)//限制数据最大四位数
+  28   4                                      {
+  29   5                                              Data_1 *= 10;
+  30   5                                              Data_1 += K_Num;
+  31   5                                              LCD_ShowNum(1,1,Data_1,4);      //显示出来                      
+  32   5                                      }
+  33   4                              }
+  34   3                              else if(((K_Num == '+') || (K_Num == '-') || (K_Num == '*') //+ - * /的检测
+  35   3                                      || (K_Num == '/')) && (CFlag_2 == 0))
+  36   3                              {                                                
+  37   4                                      CFlag_1 = 1;
+  38   4                                      Sym[0] = K_Num;
+  39   4                                      LCD_ShowString(1,6,Sym);
+  40   4                              }
+  41   3                              else if((K_Num != '+') && (K_Num != '-') && (K_Num != '*')
+  42   3                                      && (K_Num != 'C') && (K_Num != '=') && (K_Num != '/')
+  43   3                                      && (CFlag_1 == 1) && (CFlag_2 == 0))//第二个数据的输入判断
+  44   3                              {
+  45   4                                      if(Data_2 <= 1000)//
+  46   4                                      {
+  47   5                                              Data_2 *= 10;
+  48   5                                              Data_2 += K_Num;
+  49   5                                              LCD_ShowNum(1,8,Data_2,4);
+  50   5                                      }  
+  51   4                              }
+  52   3                              else if((K_Num == '=') && (CFlag_1 == 1) && (CFlag_2 == 0))//等号判断，按下等号即进行运算
+  53   3                              {
+  54   4                                      LCD_ShowString(1,14,"=");
+  55   4                                      if(Sym[0] == '+')
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:21:41 PAGE 2   
+
+  56   4                                      {
+  57   5                                              Data_3 = Data_1+Data_2;
+  58   5                                      }
+  59   4                                      else if(Sym[0] == '-')
+  60   4                                      {
+  61   5                                              Data_3 = Data_1-Data_2;
+  62   5                                      }
+  63   4                                      else if(Sym[0] == '*')
+  64   4                                      {
+  65   5                                              Data_3 = Data_1*Data_2;
+  66   5                                      }
+  67   4                                      else if(Sym[0] == '/')
+  68   4                                      {
+  69   5                                              Data_3 = Data_1/Data_2;
+  70   5                                      }
+  71   4                                      CFlag_2 = 1;  //按下等号后即锁死前面的入口，不允许改变Data_1 Data_2 Sym
+  72   4                                      for(i=0;i<8;i++)
+  73   4                                      {
+  74   5                                              Num[i] = (Data_3/Pow(10,7-i))%10;
+  75   5                                              //UART_SendByte(Num[i]+'0');    
+  76   5                                      }
+  77   4                                      for(i=0;i<8;i++)
+  78   4                                      {
+  79   5                                              LCD_ShowNum(2,7+i,Num[i],1);
+  80   5                                      }//显示 Data_3
+  81   4                              }
+  82   3                              else if(K_Num == 'C')  //按下相应键码C之后初始化
+  83   3                              {
+  84   4                                      Data_1 = 0;
+  85   4                                      Data_2 = 0;
+  86   4                                      Data_3 = 0;
+  87   4                                      CFlag_1 = 0;
+  88   4                                      CFlag_2 = 0;
+  89   4                                      for(i=0;i<8;i++)
+  90   4                                      {
+  91   5                                              Num[i] = 0;
+  92   5                                      }
+  93   4                                      LCD_ShowNum(1,1,Data_1,4);
+  94   4                                      LCD_ShowNum(1,8,Data_2,4);
+  95   4                                      LCD_ShowString(1,6," ");
+  96   4                                      LCD_ShowString(2,6,"            ");
+  97   4                              }
+  98   3      
+  99   3                      } 
+ 100   2              }
+ 101   1      }
+ 102          unsigned long Pow(int X,int Y)
+ 103          {
+ 104   1              unsigned char i;
+ 105   1              unsigned long Result=1;
+ 106   1              for(i=0;i<Y;i++)
+ 107   1              {
+ 108   2                      Result*=X;
+ 109   2              }
+ 110   1              return Result;
+ 111   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    836    ----
+   CONSTANT SIZE    =     21    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:21:41 PAGE 3   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     37       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

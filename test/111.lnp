@@ -1,0 +1,8 @@
+"Delay.obj",
+"key_TIMER.obj",
+"main.obj",
+"Matrix_Timer.obj",
+"Nixie_Timer.obj",
+"Timer0.obj" 
+TO "111" 
+RAMSIZE(256) 

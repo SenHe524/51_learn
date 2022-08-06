@@ -1,0 +1,62 @@
+C51 COMPILER V9.01   MAIN                                                                  02/09/2022 13:53:40 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          //#include "NIXIE.H"
+   3          #include "TIMER0.H"
+   4          #include "Matrix_TIMER.H"
+   5          #include "NIXIE_TIMER.H"
+   6          
+   7          
+   8          unsigned char KeyNum;
+   9          
+  10          void main()
+  11          {
+  12   1              Timer0_Init();
+  13   1              while(1)
+  14   1              {
+  15   2                       KeyNum = Matrix_Num();
+  16   2                       if(KeyNum)
+  17   2                       Nixie_Scan(1,KeyNum);
+  18   2              }
+  19   1      }
+  20          void Timer0_Routine() interrupt 1
+  21          {
+  22   1              static unsigned int T0count1,T0count2;
+  23   1              TL0 = 0x18;             //设置定时初始值
+  24   1              TH0 = 0xFC;             //设置定时初始值
+  25   1              if(T0count1>=10)
+  26   1              {
+  27   2                      T0count1 = 0;
+  28   2                      Matrix_Loop();
+  29   2              }
+  30   1              T0count1++;
+  31   1              if(T0count2>=2)
+  32   1              {
+  33   2                      T0count2 = 0;
+  34   2                      Nixie_Loop();
+  35   2              }
+  36   1              T0count2++;
+  37   1      
+  38   1      }
+  39          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    140    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

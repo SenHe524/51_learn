@@ -1,0 +1,4 @@
+"int_1.obj",
+"Timer0.obj" 
+TO "int_1" 
+RAMSIZE(256) 

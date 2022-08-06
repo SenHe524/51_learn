@@ -1,0 +1,158 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        01/11/2022  18:18:54  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+E:\KEIL5\C51\BIN\BL51.EXE D_scr_595.obj, Delay.obj, Show_74HC595.obj TO D_scr_1 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  D_scr_595.obj (D_SCR_595)
+  Delay.obj (DELAY)
+  Show_74HC595.obj (SHOW_74HC595)
+  E:\KEIL5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  D_scr_1 (D_SCR_595)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     003AH     UNIT         ?PR?MAIN?D_SCR_595
+            CODE    083AH     0039H     UNIT         ?PR?_WRITEBYTE_74595?SHOW_74HC595
+            CODE    0873H     0024H     UNIT         ?PR?_D_SCR_SHOW?SHOW_74HC595
+            CODE    0897H     0014H     UNIT         ?PR?_DELAYMS?DELAY
+            CODE    08ABH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   D_scr_1 (D_SCR_595)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?D_SCR_595
+
+?PR?MAIN?D_SCR_595
+  +--> ?PR?_D_SCR_SHOW?SHOW_74HC595
+
+?PR?_D_SCR_SHOW?SHOW_74HC595
+  +--> ?PR?_WRITEBYTE_74595?SHOW_74HC595
+  +--> ?PR?_DELAYMS?DELAY
+
+
+
+SYMBOL TABLE OF MODULE:  D_scr_1 (D_SCR_595)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      01/11/2022  18:18:54  PAGE 2
+
+
+  -------         MODULE        D_SCR_595
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0800H         PUBLIC        main
+  -------         PROC          MAIN
+  C:0800H         LINE#         5
+  C:0800H         LINE#         6
+  C:0800H         LINE#         7
+  C:0800H         LINE#         8
+  C:0800H         LINE#         9
+  C:0807H         LINE#         10
+  C:080EH         LINE#         11
+  C:0815H         LINE#         12
+  C:081CH         LINE#         13
+  C:0823H         LINE#         14
+  C:082AH         LINE#         15
+  C:0831H         LINE#         16
+  C:0838H         LINE#         17
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        D_SCR_595
+
+  -------         MODULE        DELAY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0897H         PUBLIC        _Delayms
+  -------         PROC          _DELAYMS
+  D:0006H         SYMBOL        ms
+  -------         DO            
+  D:0005H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:0897H         LINE#         8
+  C:0897H         LINE#         9
+  C:0897H         LINE#         11
+  C:089BH         LINE#         12
+  C:089BH         LINE#         13
+  C:089DH         LINE#         14
+  C:089FH         LINE#         16
+  C:089FH         LINE#         17
+  C:08A1H         LINE#         18
+  C:08A3H         LINE#         19
+  C:08A8H         LINE#         20
+  C:08AAH         LINE#         21
+  -------         ENDPROC       _DELAYMS
+  -------         ENDMOD        DELAY
+
+  -------         MODULE        SHOW_74HC595
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:00B0H         PUBLIC        P3
+  C:083AH         PUBLIC        _WriteByte_74595
+  C:0873H         PUBLIC        _D_Scr_Show
+  B:00B0H.5       PUBLIC        RCK
+  B:00B0H.6       PUBLIC        SCK
+  B:00B0H.4       PUBLIC        SER
+  -------         PROC          _WRITEBYTE_74595
+  D:0001H         SYMBOL        Byte
+  -------         DO            
+  D:0002H         SYMBOL        i
+BL51 BANKED LINKER/LOCATER V6.22                                                      01/11/2022  18:18:54  PAGE 3
+
+
+  -------         ENDDO         
+  C:083AH         LINE#         16
+  C:083CH         LINE#         17
+  C:083CH         LINE#         19
+  C:083EH         LINE#         20
+  C:0840H         LINE#         24
+  C:0843H         LINE#         25
+  C:0843H         LINE#         26
+  C:085FH         LINE#         27
+  C:0861H         LINE#         28
+  C:0863H         LINE#         29
+  C:086EH         LINE#         30
+  C:0870H         LINE#         31
+  C:0872H         LINE#         32
+  -------         ENDPROC       _WRITEBYTE_74595
+  -------         PROC          _D_SCR_SHOW
+  D:0004H         SYMBOL        line
+  D:0006H         SYMBOL        Data
+  C:0873H         LINE#         40
+  C:0877H         LINE#         41
+  C:0877H         LINE#         42
+  C:087CH         LINE#         43
+  C:088CH         LINE#         44
+  C:0893H         LINE#         45
+  C:0896H         LINE#         46
+  -------         ENDPROC       _D_SCR_SHOW
+  -------         ENDMOD        SHOW_74HC595
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00ABH BYTE ( 8%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=186
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

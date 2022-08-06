@@ -1,0 +1,6 @@
+"Lcd_1.obj",
+"Timer0.obj",
+"LCD1602.obj",
+"Delay.obj" 
+TO "Lcd_1" 
+RAMSIZE(256) 

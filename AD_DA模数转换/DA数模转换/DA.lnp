@@ -1,0 +1,7 @@
+"main.obj",
+"Timer0.obj",
+"Delay.obj",
+"key.obj",
+"Nixie.obj" 
+TO "DA" 
+RAMSIZE(256) 

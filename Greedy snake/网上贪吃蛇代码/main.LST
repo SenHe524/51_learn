@@ -1,0 +1,352 @@
+C51 COMPILER V9.01   MAIN                                                                  01/28/2022 10:37:38 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include<reg52.h>
+   2          #include <stdlib.h> 
+   3           
+   4          typedef unsigned int u16;
+   5          typedef unsigned char u8;
+   6           
+   7          sbit RCLKS = P3^5;
+   8          sbit SRCLK = P3^6;
+   9          sbit SET = P3^4;
+  10           
+  11          //Row为1亮，Col为0亮
+  12          u8 Row = 0x08;
+  13          u8 Col = 0xF7;
+  14           
+  15          //最大长度为5 ,防止过长出现闪烁
+  16          u8 Rows[5];
+  17          u8 Cols[5];
+  18           
+  19          u8 len = 1;
+  20          u8 direct = 0;
+  21           
+  22          u16 p=0;//每8次中断检测一次
+  23          void Init_time_0()
+  24          {
+  25   1          TMOD = 0x01;
+  26   1          TH0 = 0x0c;
+  27   1          TL0 = 0x0c;
+  28   1          ET0 = 1;
+  29   1          EA = 1;
+  30   1          TR0 = 1;
+  31   1      }
+  32           
+  33           
+  34          void delay(u16 i)
+  35          {
+  36   1          while(i--);
+  37   1      }
+  38          void  Led(u8 dat,u8 dat2)
+  39          {
+  40   1          u16 i;
+  41   1          RCLKS = 1;
+  42   1          SRCLK = 1;
+  43   1           
+  44   1           
+  45   1          for(i=0;i<8;i++)
+  46   1          {
+  47   2              SET = dat>>7;
+  48   2              dat = dat <<1;
+  49   2              SRCLK = 0;
+  50   2              SRCLK =1;
+  51   2          }
+  52   1           
+  53   1          RCLKS = 0;
+  54   1           
+  55   1          RCLKS = 1;
+C51 COMPILER V9.01   MAIN                                                                  01/28/2022 10:37:38 PAGE 2   
+
+  56   1          P0 = dat2;
+  57   1      }
+  58           
+  59           
+  60          u16 KEY()   
+  61          {
+  62   1          u16 key = -1;
+  63   1          P1 = 0x0f;
+  64   1           
+  65   1           
+  66   1          if(P1 != 0x0f)
+  67   1          {
+  68   2              delay(500);
+  69   2               
+  70   2              if(P1 != 0x0f)
+  71   2              {
+  72   3                  P1 = 0x0f;
+  73   3                  switch(P1)
+  74   3                  {
+  75   4                      case (0x07): key = 0;break;
+  76   4                      case (0x0b): key = 1;break;
+  77   4                      case (0x0d): key = 2;break;
+  78   4                      case (0x0e): key = 3;break;
+  79   4                  }
+  80   3                  P1 = 0xf0;
+  81   3                  switch(P1)
+  82   3                  {
+  83   4                      case(0x70): key+=0;break;
+  84   4                      case(0xb0): key+=4;break;
+  85   4                      case(0xd0): key+=8;break;
+  86   4                      case(0xe0): key+=12;break;
+  87   4                  }
+  88   3              }
+  89   2               
+  90   2               
+  91   2           
+  92   2           
+  93   2          }
+  94   1           
+  95   1           
+  96   1          return key;
+  97   1           
+  98   1       
+  99   1      }
+ 100           
+ 101           
+ 102           
+ 103           
+ 104          void Up(u8 len)
+ 105          {
+ 106   1          u8 i;
+ 107   1          u8 tmp = Rows[0];
+ 108   1          u8 rr,cc_1,cc_2;
+ 109   1          if(Rows[0] != 0x80)
+ 110   1              Rows[0] <<=1;
+ 111   1          cc_1 = Cols[0];
+ 112   1              //后一节依次等于前一节的值
+ 113   1          for(i=1;i<len;i++)
+ 114   1          {
+ 115   2               
+ 116   2              rr = Rows[i];
+ 117   2              Rows[i] =tmp;
+C51 COMPILER V9.01   MAIN                                                                  01/28/2022 10:37:38 PAGE 3   
+
+ 118   2              tmp = rr;
+ 119   2               
+ 120   2              cc_2 = Cols[i];
+ 121   2              Cols[i] = cc_1;
+ 122   2              cc_1 = cc_2;
+ 123   2          }
+ 124   1       
+ 125   1      }
+ 126           
+ 127           
+ 128          void Down(u8 len)
+ 129          {
+ 130   1          u8 i;
+ 131   1          u8 tmp = Rows[0];
+ 132   1          u8 rr,cc_1,cc_2;
+ 133   1          if(Rows[0] != 0x01)
+ 134   1              Rows[0]>>=1;
+ 135   1          cc_1 = Cols[0];
+ 136   1          for(i=1;i<len;i++)
+ 137   1          {
+ 138   2               
+ 139   2              rr = Rows[i];
+ 140   2              Rows[i] =tmp;
+ 141   2              tmp = rr;
+ 142   2               
+ 143   2              cc_2 = Cols[i];
+ 144   2              Cols[i] = cc_1;
+ 145   2              cc_1 = cc_2;
+ 146   2          }
+ 147   1      }
+ 148           
+ 149          void Left(u8 len)
+ 150          {
+ 151   1          u8 i;
+ 152   1          u8 tmp = Cols[0];
+ 153   1          u8 cc,rr_1,rr_2;
+ 154   1          if(Cols[0] != 0x7F)
+ 155   1          {
+ 156   2              Cols[0] <<=1;
+ 157   2              Cols[0] += 1;
+ 158   2          }
+ 159   1          rr_1 = Rows[0];
+ 160   1          for(i=1;i<len;i++)
+ 161   1          {
+ 162   2              cc = Cols[i];
+ 163   2              Cols[i] = tmp;
+ 164   2              tmp = cc;
+ 165   2               
+ 166   2              rr_2 = Rows[i];
+ 167   2              Rows[i] = rr_1;
+ 168   2              rr_1 = rr_2;
+ 169   2           
+ 170   2          }
+ 171   1      }
+ 172           
+ 173          void Right(u8 len)
+ 174          {
+ 175   1          u8 i;
+ 176   1          u8 tmp = Cols[0];
+ 177   1          u8 cc,rr_1,rr_2;
+ 178   1          if(Cols[0] != 0xFE)
+ 179   1          {
+C51 COMPILER V9.01   MAIN                                                                  01/28/2022 10:37:38 PAGE 4   
+
+ 180   2              Cols[0] >>=1;
+ 181   2              Cols[0] += 0x80;
+ 182   2          }
+ 183   1          rr_1 = Rows[0];
+ 184   1          for(i=1;i<len;i++)
+ 185   1          {
+ 186   2              cc = Cols[i];
+ 187   2              Cols[i] = tmp;
+ 188   2              tmp = cc;
+ 189   2               
+ 190   2              rr_2 = Rows[i];
+ 191   2              Rows[i] = rr_1;
+ 192   2              rr_1 = rr_2;
+ 193   2           
+ 194   2          }
+ 195   1      }
+ 196           
+ 197          void main()
+ 198          {
+ 199   1          u8 i;
+ 200   1          u16 key;
+ 201   1          //u8 len = 1;
+ 202   1          u8 Food_row = 0x20;
+ 203   1          u8 Food_col = 0xfb;
+ 204   1          //u8 direct = 0;
+ 205   1          Rows[0] = Row;
+ 206   1          Cols[0] = Col;
+ 207   1          Init_time_0();
+ 208   1          while(1)
+ 209   1          {
+ 210   2      //      key = KEY();
+ 211   2      //      if(key != -1)
+ 212   2      //      {
+ 213   2      //          if(key == 1)
+ 214   2      //          {
+ 215   2      //              Up(len);
+ 216   2      //          //  direct = 0;
+ 217   2      //              delay(20000);
+ 218   2      //          }
+ 219   2      //          if(key == 9)
+ 220   2      //          {
+ 221   2      //              Down(len);
+ 222   2      //              //direct = 1;
+ 223   2      //              delay(20000);
+ 224   2      //          }
+ 225   2      //          if(key == 4)
+ 226   2      //          {
+ 227   2      //              Left(len);
+ 228   2      //              //direct = 2;
+ 229   2      //              delay(20000);
+ 230   2      //          }
+ 231   2      //          if(key == 6)
+ 232   2      //          {
+ 233   2      //              Right(len);
+ 234   2      //              //direct = 3;
+ 235   2      //              delay(20000);
+ 236   2      //          }
+ 237   2      //      }
+ 238   2      //      switch(direct)
+ 239   2      //      {
+ 240   2      //          case 0: Up(len);break;
+ 241   2      //          case 1: Down(len);break;
+C51 COMPILER V9.01   MAIN                                                                  01/28/2022 10:37:38 PAGE 5   
+
+ 242   2      //          case 2: Left(len);break;
+ 243   2      //          case 3: Right(len);break;
+ 244   2      //      }
+ 245   2              //判断蛇头是否到达食物的位置
+ 246   2              if((Rows[0] == Food_row) && (Cols[0] == Food_col))
+ 247   2              {
+ 248   3                  if(len<5)
+ 249   3                  {
+ 250   4                      Rows[len] = Rows[len-1];
+ 251   4                      Cols[len] = Cols[len-1];
+ 252   4                      len++;
+ 253   4       
+ 254   4       
+ 255   4       
+ 256   4                  }
+ 257   3                              //随机更新食物的位置
+ 258   3                              Food_col = ~(0x01 << rand()%8);
+ 259   3                              Food_row = 0x01 << rand()%8;
+ 260   3              }
+ 261   2               
+ 262   2              Led(Food_row,Food_col);
+ 263   2              for(i=0;i<len;i++)
+ 264   2                  Led(Rows[i],Cols[i]);
+ 265   2               
+ 266   2          }
+ 267   1       
+ 268   1       
+ 269   1      }
+*** WARNING C280 IN LINE 200 OF MAIN.C: 'key': unreferenced local variable
+ 270           
+ 271          void Time_0() interrupt 1
+ 272          {
+ 273   1          u8 key;
+ 274   1          key = KEY();
+ 275   1          if(key != -1)
+ 276   1          {
+ 277   2              if(key == 1)
+ 278   2              {
+ 279   3                  //Up(len);
+ 280   3                  direct = 0;
+ 281   3                  delay(10000);
+ 282   3              }
+ 283   2              if(key == 9)
+ 284   2              {
+ 285   3                  //Down(len);
+ 286   3                  direct = 1;
+ 287   3                  delay(10000);
+ 288   3              }
+ 289   2              if(key == 4)
+ 290   2              {
+ 291   3                  //Left(len);
+ 292   3                  direct = 2;
+ 293   3                  delay(10000);
+ 294   3              }
+ 295   2              if(key == 6)
+ 296   2              {
+ 297   3                  //Right(len);
+ 298   3                  direct = 3;
+ 299   3                  delay(10000);
+ 300   3              }
+ 301   2          }
+ 302   1          //防止p过大
+C51 COMPILER V9.01   MAIN                                                                  01/28/2022 10:37:38 PAGE 6   
+
+ 303   1          if(p>8*100)
+ 304   1              p = 0;
+ 305   1          p++;
+ 306   1          if(p%8 == 0)
+ 307   1          {
+ 308   2          switch(direct)
+ 309   2          {
+ 310   3              case 0: Up(len);break;
+ 311   3              case 1: Down(len);break;
+ 312   3              case 2: Left(len);break;
+ 313   3              case 3: Right(len);break;
+ 314   3          }
+ 315   2          }
+ 316   1          TH0 = 0x0c;
+ 317   1          TL0 = 0x0c;
+ 318   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    694    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

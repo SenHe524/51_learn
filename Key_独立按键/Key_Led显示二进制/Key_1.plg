@@ -1,0 +1,23 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\AUTO_1\Desktop\keil5_project\Key_test\Key_Led显示二进制\Key_2.uvproj
+Project File Date:  01/07/2022
+
+<h2>Output:</h2>
+Build target 'Target 1'
+linking...
+Program Size: data=17.0 xdata=0 code=198
+"Key_1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=17.0 xdata=0 code=198
+creating hex file from "Key_2"...
+"Key_2" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+linking...
+Program Size: data=17.0 xdata=0 code=198
+creating hex file from "Key_2"...
+"Key_2" - 0 Error(s), 0 Warning(s).

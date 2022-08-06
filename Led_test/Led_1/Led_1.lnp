@@ -1,0 +1,4 @@
+"Led_1.obj",
+"Led_2.obj" 
+TO "Led_1" 
+RAMSIZE(256) 

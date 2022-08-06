@@ -1,0 +1,9 @@
+"key_TIMER.obj",
+"main.obj",
+"Nixie.obj",
+"Timer0.obj",
+"Delay.obj",
+"AT24C02.obj",
+"I2C.obj" 
+TO "Stopwatch" 
+RAMSIZE(256) 

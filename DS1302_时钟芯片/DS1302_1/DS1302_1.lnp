@@ -1,0 +1,7 @@
+"DS1302_1.obj",
+"Delay.obj",
+"LCD1602.obj",
+"DS1302_Fuction.obj" 
+TO "DS1302_1" 
+RAMSIZE(256) 
+DISABLEWARNING (16) 

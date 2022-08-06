@@ -1,0 +1,6 @@
+"Delay.obj",
+"int_2.obj",
+"key.obj",
+"Timer0.obj" 
+TO "int_2" 
+RAMSIZE(256) 

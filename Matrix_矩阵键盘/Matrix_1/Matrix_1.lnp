@@ -1,0 +1,7 @@
+"Matrix_1.obj",
+"Delay.obj",
+"LCD1602.obj",
+"Nixie.obj",
+"Matrix_Num.obj" 
+TO "Matrix_1" 
+RAMSIZE(256) 

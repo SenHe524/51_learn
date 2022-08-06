@@ -1,0 +1,5 @@
+"D_scr_2.obj",
+"Show_74HC595.obj",
+"Delay.obj" 
+TO "D_scr_2" 
+RAMSIZE(256) 

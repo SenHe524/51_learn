@@ -1,0 +1,127 @@
+C51 COMPILER V9.01   MAIN                                                                  02/08/2022 16:25:04 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "TIMER0.H"
+   3          #include "KEY_TIMER.H"
+   4          #include "NIXIE.H"
+   5          #include "DELAY.H"
+   6          #include "I2C.H"
+   7          #include "AT24C02.H"
+   8          
+   9          
+  10          
+  11          
+  12          unsigned char KeyNum,RunFlag;
+  13          unsigned char Min,Sec,MinSec;
+  14          
+  15          
+  16          void main()
+  17          {
+  18   1              Timer0_Init();
+  19   1              while(1)
+  20   1              {
+  21   2                      KeyNum = Key();
+  22   2                      if(KeyNum)
+  23   2                      {
+  24   3                              if(KeyNum == 1)
+  25   3                              {
+  26   4                                      RunFlag = !RunFlag;
+  27   4                              }
+  28   3                              else if(KeyNum == 2)
+  29   3                              {
+  30   4                                      Min = 0;
+  31   4                                      Sec = 0;
+  32   4                                      MinSec = 0;
+  33   4                              }
+  34   3                              else if(KeyNum == 3)
+  35   3                              {
+  36   4                                      AT24C02_WriteByte(0,Min);Delayms(5);
+  37   4                                      AT24C02_WriteByte(1,Sec);Delayms(5);
+  38   4                                      AT24C02_WriteByte(2,MinSec);Delayms(5);
+  39   4                              }
+  40   3                              else if(KeyNum == 4)
+  41   3                              {
+  42   4                                      Min = AT24C02_ReadByte(0);
+  43   4                                  Sec = AT24C02_ReadByte(1);
+  44   4                                      MinSec = AT24C02_ReadByte(2);
+  45   4                              }       
+  46   3                      }
+  47   2                      Nixie_Scan(1,Min/10);
+  48   2                      Nixie_Scan(2,Min%10);
+  49   2                      Nixie_Scan(3,17);
+  50   2                      Nixie_Scan(4,Sec/10);
+  51   2                      Nixie_Scan(5,Sec%10);
+  52   2                      Nixie_Scan(6,17);
+  53   2                      Nixie_Scan(7,MinSec/10);
+  54   2                      Nixie_Scan(8,MinSec%10);
+  55   2      
+C51 COMPILER V9.01   MAIN                                                                  02/08/2022 16:25:04 PAGE 2   
+
+  56   2              }
+  57   1      }
+  58          void Sec_Loop()
+  59          {
+  60   1              if(RunFlag)
+  61   1              {
+  62   2                      MinSec++;
+  63   2                      if(MinSec>=100)
+  64   2                      {
+  65   3                              MinSec = 0;
+  66   3                              Sec++;
+  67   3                              if(Sec>=60)
+  68   3                              {
+  69   4                                      Sec = 0;
+  70   4                                      Min++;
+  71   4                                      if(Min>=60)
+  72   4                                      {
+  73   5                                              Min = 0;
+  74   5                                      }
+  75   4                              }
+  76   3                      }
+  77   2              }
+  78   1      }
+  79          void Timer0_Routine() interrupt 1
+  80          {
+  81   1              static unsigned int T0count1,T0count2,T0count3;
+  82   1              TL0 = 0x18;             //设置定时初始值
+  83   1              TH0 = 0xFC;             //设置定时初始值
+  84   1              if(T0count1>=20)
+  85   1              {
+  86   2                      T0count1 = 0;
+  87   2                      Key_Loop();
+  88   2              }
+  89   1              T0count1++;
+  90   1              if(T0count2>=2)
+  91   1              {
+  92   2                      T0count2 = 0;
+  93   2                      Nixie_Loop();
+  94   2              }
+  95   1              T0count2++;
+  96   1              if(T0count3>=10)
+  97   1              {
+  98   2                      T0count3 = 0;
+  99   2                      Sec_Loop();
+ 100   2              }
+ 101   1              T0count3++;
+ 102   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    429    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     11    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,9 @@
+"LCD1602.obj",
+"main.obj",
+"Delay.obj",
+"Int0.obj",
+"Timer0.obj",
+"IR.obj" 
+TO "inf_remote_ctr" 
+RAMSIZE(256) 
+DISABLEWARNING (16) 

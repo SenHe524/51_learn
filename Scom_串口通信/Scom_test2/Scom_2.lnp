@@ -1,0 +1,6 @@
+"Delay.obj",
+"Scom_2.obj",
+"Timer0.obj",
+"UART.obj" 
+TO "Scom_2" 
+RAMSIZE(256) 

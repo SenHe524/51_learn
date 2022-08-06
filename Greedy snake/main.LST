@@ -1,0 +1,263 @@
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:15:58 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <stdlib.h>
+   3          #include "TIMER0.H"
+   4          #include "MATRIX_NUM.H"
+   5          #include "DELAY.H"
+   6          #include "SHOW_74HC595.H"
+   7          
+   8          unsigned char i;
+   9          unsigned char KeyNum,Game_State;  //按键键码，游戏状态
+  10          unsigned char code Led[] = {0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01};
+  11          unsigned char Snake_head[2];                  //蛇头位置
+  12          unsigned char Snake_BodyColumn[30];       //蛇身位置：列
+  13          unsigned char Snake_BodyLine[30];         //蛇身位置：行
+  14          unsigned char Snake_Flag;   //蛇身长度
+  15          unsigned char Temp_BodyColumn,Temp_BodyLine;      //临时存储位置
+  16          unsigned char Food_Line,Food_Column;   //食物行列
+  17          unsigned char L_KeyNum;   
+  18          void Snake_Init();
+  19          void Food_Update();
+  20          void Snake_Show();
+  21          void Snake_Update();
+  22          void Snake_Move();
+  23          void Food_Touch();
+  24          
+  25          void main()
+  26          {
+  27   1              Timer0_Init(); //定时器初始化
+  28   1              D_Scr_Init();
+  29   1              while(1)
+  30   1              {
+  31   2                      KeyNum = Matrix_Num();    //获取按键
+  32   2      
+  33   2                      if((KeyNum == 6) && (Game_State == 0))//在游戏未开始时按下6开始游戏
+  34   2                      {
+  35   3                              Game_State = 1;                 //更改游戏状态
+  36   3                              Food_Column = rand()%8;  //食物初始化
+  37   3                              Food_Line = rand()%8;
+  38   3                              Snake_Init();                    //蛇数据初始化
+  39   3                              while(Game_State)                //游戏循环
+  40   3                              {
+  41   4                                      KeyNum = Matrix_Num();
+  42   4                                      if(KeyNum != 0) //过滤按键空闲时Matrix_Num传回的0
+  43   4                                      {
+  44   5                                              L_KeyNum = KeyNum;       //将按键键码赋值给L_KeyNum
+  45   5                                      }
+  46   4                                      Food_Update();   //食物更新
+  47   4                                      Snake_Show();    //LED显示蛇
+  48   4                                      Food_Touch();    //检测食物碰撞
+  49   4                              }
+  50   3                      }
+  51   2              }
+  52   1      }
+  53          
+  54          void Timer0_Routine() interrupt 1
+  55          {
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:15:58 PAGE 2   
+
+  56   1              static unsigned int T0count1,T0count2;  
+  57   1              TL0 = 0x18;             //设置定时初始值
+  58   1              TH0 = 0xFC;             //设置定时初始值
+  59   1              if(T0count1>=10)  //T0count1计时大于10时清零
+  60   1              {
+  61   2                      T0count1 = 0;
+  62   2                      Matrix_Loop(); //计时10ms后调用一次按键检测
+  63   2              }
+  64   1              T0count1++;     //T0count1计时加一
+  65   1              if(Game_State == 1) 
+  66   1              {
+  67   2                      if(Snake_Flag<4)
+  68   2                      {
+  69   3                              if(T0count2 >= 700)   //T0count2计时大于700时清零
+  70   3                              {
+  71   4                                      T0count2 = 0;
+  72   4                                      Snake_Move();    //每700ms蛇移动一次
+  73   4                              }       
+  74   3                              T0count2++;        //T0count1计时加一
+  75   3                      }
+  76   2                      else if((Snake_Flag < 7) && (Snake_Flag >= 4))
+  77   2                      {
+  78   3                              if(T0count2 >= 500)   //T0count2计时大于500时清零
+  79   3                              {
+  80   4                                      T0count2 = 0;
+  81   4                                      Snake_Move();    //每500ms蛇移动一次
+  82   4                              }       
+  83   3                              T0count2++;        //T0count1计时加一
+  84   3                      }
+  85   2                      else
+  86   2                      {
+  87   3                              if(T0count2 >= 300)   //T0count2计时大于300时清零
+  88   3                              {
+  89   4                                      T0count2 = 0;
+  90   4                                      Snake_Move();    //每300ms蛇移动一次
+  91   4                              }       
+  92   3                              T0count2++;        //T0count1计时加一
+  93   3                      }
+  94   2                      
+  95   2              }
+  96   1      }
+  97          
+  98          void Snake_Init()
+  99          {
+ 100   1              Snake_head[0] = 2;Snake_head[1] = 0;     //蛇头初始位置：1行三列
+ 101   1              Snake_BodyColumn[0] = 1;
+ 102   1              Snake_BodyColumn[1] = 0;          //蛇身初始位置：列
+ 103   1              Snake_BodyLine[0] = 0;
+ 104   1              Snake_BodyLine[1] = 0;    //蛇身初始位置：行
+ 105   1              Snake_Flag = 2;
+ 106   1              L_KeyNum = 0;
+ 107   1              Temp_BodyColumn,Temp_BodyLine;    //临时存储位置
+ 108   1      }
+ 109          void Food_Update()
+ 110          {
+ 111   1              unsigned char j;
+ 112   1              if((Snake_head[0] == Food_Column) && (Snake_head[1] == Food_Line)) 
+ 113   1              {
+ 114   2                      Food_Column = rand()%8;   //判断蛇头与食物重合时，更新食物位置
+ 115   2                      Food_Line = rand()%8;
+ 116   2      
+ 117   2              }
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:15:58 PAGE 3   
+
+ 118   1              for(j=0;j<Snake_Flag;j++)
+ 119   1              {
+ 120   2                      if((Snake_BodyColumn[j] == Food_Column) 
+ 121   2                      && (Snake_BodyLine[j] == Food_Line))
+ 122   2                      {
+ 123   3                              Food_Column = rand()%8;   //判断蛇身与食物重合时，更新食物位置
+ 124   3                              Food_Line = rand()%8;
+ 125   3                      }
+ 126   2              }
+ 127   1      }
+ 128          void Snake_Show()         //LED显示蛇的身体与头，食物
+ 129          {
+ 130   1              for(i=0;i<Snake_Flag;i++)
+ 131   1              {
+ 132   2                      D_Scr_Show(Snake_BodyColumn[i],Led[Snake_BodyLine[i]]);
+ 133   2              }
+ 134   1              D_Scr_Show(Snake_head[0],Led[Snake_head[1]]);
+ 135   1              D_Scr_Show(Food_Column,Led[Food_Line]);
+ 136   1      }
+ 137          void Snake_Update()               
+ 138          {
+ 139   1              for(i = 0; i < Snake_Flag; i++)
+ 140   1              {
+ 141   2                      if((Snake_head[0] == Snake_BodyColumn[i]) && (Snake_head[1] == Snake_BodyLine[i]))
+ 142   2                      {
+ 143   3                              Game_State = 0;
+ 144   3                              break;
+ 145   3                      }
+ 146   2              }
+ 147   1              Temp_BodyColumn = Snake_head[0];   //记录蛇头的行列
+ 148   1              Temp_BodyLine = Snake_head[1];
+ 149   1              for(i=0;i<Snake_Flag-1;i++)                //循环更新蛇身
+ 150   1              {
+ 151   2                      Snake_BodyColumn[Snake_Flag-1-i]=Snake_BodyColumn[Snake_Flag-i-2];
+ 152   2                      Snake_BodyLine[Snake_Flag-1-i]=Snake_BodyLine[Snake_Flag-i-2];
+ 153   2              }
+ 154   1              Snake_BodyColumn[0] = Temp_BodyColumn;
+ 155   1              Snake_BodyLine[0] = Temp_BodyLine;
+ 156   1      
+ 157   1      }
+ 158          
+ 159          void Snake_Move()
+ 160          {
+ 161   1              if(L_KeyNum == 2)       //按键键码为2时，蛇向上走
+ 162   1              {
+ 163   2                      Snake_Update();   //调用蛇更新函数
+ 164   2                      if(Snake_head[1] == 0)          //蛇头触顶检测
+ 165   2                      {
+ 166   3                              Snake_head[1] = 7;         //若蛇头触顶则从最下方出来
+ 167   3                      }
+ 168   2                      else
+ 169   2                      {
+ 170   3                              Snake_head[1] -= 1;       //若未触顶，蛇头行数据向上移位
+ 171   3                      }
+ 172   2              }
+ 173   1              else if(L_KeyNum == 5)  //按键键码为5时，蛇向左走
+ 174   1              {
+ 175   2                      Snake_Update();   //调用蛇更新函数
+ 176   2                      if(Snake_head[0] == 0)
+ 177   2                      {
+ 178   3                              Snake_head[0] = 7;       //若蛇头在最左方则从最右方出来
+ 179   3                      }
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:15:58 PAGE 4   
+
+ 180   2                      else
+ 181   2                      {
+ 182   3                              Snake_head[0] -= 1;       //否则，蛇头列数据向左移位
+ 183   3                      }
+ 184   2              }
+ 185   1              else if(L_KeyNum == 7)  //按键键码为7时，蛇向右走
+ 186   1              {
+ 187   2                      Snake_Update();   //调用蛇更新函数
+ 188   2                      if(Snake_head[0] == 7)
+ 189   2                      {
+ 190   3                              Snake_head[0] = 0;        //若蛇头在最右方则从最左方出来
+ 191   3                      }
+ 192   2                      else
+ 193   2                      {
+ 194   3                              Snake_head[0] += 1;       //否则，蛇头列数据向右移位
+ 195   3                      }
+ 196   2              }
+ 197   1              else if(L_KeyNum == 10) //按键键码为10时，蛇向下走
+ 198   1              {
+ 199   2                      Snake_Update();
+ 200   2                      if(Snake_head[1] == 7)          //蛇头触底检测
+ 201   2                      {
+ 202   3                              Snake_head[1] = 0;         //若蛇头触底则从最上方出来
+ 203   3                      }
+ 204   2                      else
+ 205   2                      {
+ 206   3                              Snake_head[1] += 1;        //否则，蛇头行数据向下移位
+ 207   3                      }
+ 208   2              }
+ 209   1              else if(L_KeyNum == 1)           //键码为1时，停止游戏
+ 210   1              {
+ 211   2                      Game_State = 0;
+ 212   2              }
+ 213   1      
+ 214   1      }
+ 215          void Food_Touch()
+ 216          {                                                
+ 217   1              if((Snake_head[0] == Food_Column) && (Snake_head[1] == Food_Line))
+ 218   1              {
+ 219   2                      if(Snake_Flag<10)
+ 220   2                      {
+ 221   3                              Snake_Flag += 1;           //蛇头触碰到食物时，蛇身长度加1；
+ 222   3                              //将蛇尾行列赋值给新增的空白数据
+ 223   3                              Snake_BodyColumn[Snake_Flag-1] = Snake_BodyColumn[Snake_Flag-2];
+ 224   3                              Snake_BodyLine[Snake_Flag-1] = Snake_BodyLine[Snake_Flag-2];
+ 225   3                      }
+ 226   2      //              else
+ 227   2      //              {
+ 228   2      //                      D_Scr_Byte(1);
+ 229   2      //                      Game_State = 0;
+ 230   2      //              }
+ 231   2              }
+ 232   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    680    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     75       1
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.01   MAIN                                                                  02/11/2022 15:15:58 PAGE 5   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

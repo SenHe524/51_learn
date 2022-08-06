@@ -1,0 +1,7 @@
+"main.obj",
+"Delay.obj",
+"key.obj",
+"Timer0.obj",
+"Nixie.obj" 
+TO "StopWatch" 
+RAMSIZE(256) 

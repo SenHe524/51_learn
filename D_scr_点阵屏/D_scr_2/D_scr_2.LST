@@ -1,0 +1,85 @@
+C51 COMPILER V9.01   D_SCR_2                                                               01/27/2022 15:42:28 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE D_SCR_2
+OBJECT MODULE PLACED IN D_scr_2.OBJ
+COMPILER INVOKED BY: E:\Keil5\C51\BIN\C51.EXE D_scr_2.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Show_74HC595.H"
+   3          
+   4          //在定义时加入”code“,将Animation数组放在flash中，可释放RAM内存。
+   5          //但在程序中无法对Animation进行更改。
+   6          //unsigned char code Animation[]={                         HELLO!数组
+   7          //                              0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+   8          //                              0x7F,0x10,0x10,0x10,0x7F,0x00,0x1C,0x2A,0x2A,
+   9          //                              0x2A,0x1A,0x00,0x7E,0x01,0x02,0x00,0x7E,0x01,
+  10          //                              0x02,0x00,0x1C,0x22,0x22,0x1C,0x00,0x7D,0x00,
+  11          //                              0x00,0x00,0x00,0x00,0x00,0x00,0x00
+  12          //                              };
+  13          
+  14          //unsigned char code Animation[]={        // ZYX
+  15          //                              0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  16          //                              0x46,0x4A,0x52,0x62,0x00,0x60,0x10,
+  17          //                              0x1E,0x10,0x60,0x00,0x46,0x28,0x10,
+  18          //                              0x28,0x46,0x00,0x18,0x24,0x42,0x21,
+  19          //                              0x11,0x21,0x42,0x24,0x18,0x00,0x7D,
+  20          //                              0x00,0x00,0x00,0x00,0x00,0x00,0x00
+  21          //                              };
+  22          unsigned char code Animation[]={          // HSS
+  23                                          0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+  24                                          0x1C,0x22,0x41,0x41,0x41,0x00,0x43,
+  25                                          0x24,0x18,0x18,0x24,0x43,0x00,0x3F,
+  26                                          0x4C,0x4A,0x49,0x39,0x00,0x3C,0x42,
+  27                                          0x49,0x49,0x0E,0x00,0x3F,0x48,0x48,
+  28                                          0x48,0x30,0x00,0x7D,0x00,0x7F,0x08,
+  29                                          0x08,0x7F,0x00,0x1F,0x28,0x48,0x28,
+  30                                          0x1F,0x00,0x7F,0x08,0x08,0x7F,0x00,
+  31                                          0x1F,0x28,0x48,0x28,0x1F,0x00,0x7F,
+  32                                          0x08,0x08,0x7F,0x00,0x1F,0x28,0x48,
+  33                                          0x28,0x1F,0x00,0x00,0x00,0x00,0x00,
+  34                                          0x00,0x00
+  35                                          };
+  36          
+  37          void main()
+  38          {
+  39   1              unsigned int i;
+  40   1              unsigned int offset=0;
+  41   1              unsigned int count=0;
+  42   1              D_Scr_Init();
+  43   1              while(1)
+  44   1              {               
+  45   2                      for(i=0;i<7;i++)
+  46   2                      {
+  47   3                              D_Scr_Show(i,Animation[i+offset]);      
+  48   3                      }
+  49   2                      count++;//通过count计数和offset来刷新点阵屏显示
+  50   2                      if(count>20)
+  51   2                      {
+  52   3                              count = 0;
+  53   3                              offset++;
+  54   3                              if(offset>71)//判断数组越界，当i+offset越界时，置零offset
+  55   3                              {
+C51 COMPILER V9.01   D_SCR_2                                                               01/27/2022 15:42:28 PAGE 2   
+
+  56   4                                      offset = 0;
+  57   4                              }
+  58   3                      }
+  59   2              }
+  60   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     93    ----
+   CONSTANT SIZE    =     79    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
